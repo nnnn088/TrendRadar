@@ -99,6 +99,28 @@ platforms:
     - id: "zhihu"
       name: "知乎"
       expected_domain: "zhihu.com"
+    # ── 以下为新增：国际视角中文源（大量报道海外政经）──
+    - id: "cankaoxiaoxi"
+      name: "参考消息"
+    - id: "zaobao"
+      name: "联合早报"
+    - id: "sputniknewscn"
+      name: "卫星通讯社"
+    # ── 以下为新增：财经投资源 ──
+    - id: "wallstreetcn-quick"
+      name: "华尔街见闻快讯"
+      expected_domain: "wallstreetcn.com"
+    - id: "gelonghui"
+      name: "格隆汇"
+    - id: "xueqiu"
+      name: "雪球"
+    - id: "jin10"
+      name: "金十数据"
+    # ── 以下为新增：科技/国际技术源 ──
+    - id: "github"
+      name: "GitHub"
+    - id: "solidot"
+      name: "Solidot"
 
 
 
@@ -127,19 +149,84 @@ rss:
   # - 正整数：覆盖全局设置，只推送此天数内的文章
   # - 0：禁用此频道的新鲜度过滤，推送所有文章
   feeds:
+    # ═══════════════════════════════════════════════════════
+    # 国际信息源 RSS（英文标题会由 AI 翻译为中文）
+    # 说明：以下为各媒体长期公开的官方 feed，若某条抓取报错，
+    #       把该条加一行 enabled: false 关掉即可，不影响其余
+    # ═══════════════════════════════════════════════════════
+
+    # ── 财经/市场类 ──
+    - id: "wsj-markets"
+      name: "WSJ 市场"
+      url: "https://feeds.a.dj.com/rss/RSSMarketsMain.xml"
+
+    - id: "wsj-world"
+      name: "WSJ 国际"
+      url: "https://feeds.a.dj.com/rss/RSSWorldNews.xml"
+
+    - id: "cnbc-finance"
+      name: "CNBC Finance"
+      url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000664"
+
+    - id: "ft-home"
+      name: "金融时报 FT"
+      url: "https://www.ft.com/rss/home"
+
+    - id: "marketwatch"
+      name: "MarketWatch"
+      url: "https://feeds.content.dowjones.io/public/rss/mw_topstories"
+
+    - id: "economist-finance"
+      name: "经济学人 财经"
+      url: "https://www.economist.com/finance-and-economics/rss.xml"
+
+    # ── 综合国际新闻类 ──
+    - id: "bbc-world"
+      name: "BBC World"
+      url: "https://feeds.bbci.co.uk/news/world/rss.xml"
+
+    - id: "reuters-world"
+      name: "Reuters"
+      url: "https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best"
+
+    - id: "guardian-world"
+      name: "卫报 国际"
+      url: "https://www.theguardian.com/world/rss"
+
+    - id: "aljazeera"
+      name: "半岛电视台"
+      url: "https://www.aljazeera.com/xml/rss/all.xml"
+
+    - id: "nyt-world"
+      name: "纽约时报 国际"
+      url: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"
+
+    # ── 科技类 ──
     - id: "hacker-news"
       name: "Hacker News"
       url: "https://hnrss.org/frontpage"
 
+    - id: "techcrunch"
+      name: "TechCrunch"
+      url: "https://techcrunch.com/feed/"
+
+    - id: "the-verge"
+      name: "The Verge"
+      url: "https://www.theverge.com/rss/index.xml"
+
+    - id: "arstechnica"
+      name: "Ars Technica"
+      url: "https://feeds.arstechnica.com/arstechnica/index"
+
+    - id: "yahoo-finance"
+      name: "雅虎财经"
+      url: "https://finance.yahoo.com/news/rssindex"
+
+    # ── 已禁用示例 ──
     - id: "ruanyifeng"
       name: "阮一峰的网络日志"
       url: "http://www.ruanyifeng.com/blog/atom.xml"
       enabled: false                  # 禁用
-      # max_age_days: 3               # 示例：推送 3 天内的文章（更新较慢的博客）
-     
-    - id: "yahoo-finance"
-      name: "雅虎财经"
-      url: "https://finance.yahoo.com/news/rssindex"
 
     # 自定义源示例
     # - id: "custom-feed"
@@ -324,13 +411,13 @@ storage:
   # 本地存储配置
   local:
     data_dir: "output"                # 数据目录
-    retention_days: 0                 # 保留天数（0=永久保留）
+    retention_days: 7                 # 保留天数（7=只留最近7天，自动清理更早数据）
 
   # 远程存储配置（S3 兼容协议）
   # 支持: Cloudflare R2, 阿里云 OSS, 腾讯云 COS, AWS S3, MinIO 等
   # 建议将敏感信息配置在 GitHub Secrets 或环境变量中
   remote:
-    retention_days: 0                 # 保留天数（0=永久保留）
+    retention_days: 7                 # 保留天数（7=只留最近7天，R2自动清理更早数据）
 
     # S3 兼容配置（或使用环境变量 S3_ENDPOINT_URL 等）
     endpoint_url: ""                  # 服务端点
@@ -424,7 +511,7 @@ ai_analysis:
   max_news_for_analysis: 150        # 参与分析的新闻数量上限（控制 token 成本的关键项）
                                     # 热榜优先占用配额，RSS 用剩余配额，独立展示区不受此限制
 
-  include_rss: false                # 是否包含 RSS 内容进行分析（true=包含, false=不包含）
+  include_rss: true                 # 是否包含 RSS 内容进行分析（true=包含, false=不包含）
   include_standalone: false         # 是否纳入独立展示区数据（true=纳入, false=不纳入）
 
   include_rank_timeline: true       # 排名时间线详细程度
