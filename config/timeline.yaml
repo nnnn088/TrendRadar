@@ -464,9 +464,9 @@ custom:
       start: "06:00"
       end: "08:00"                 # 英国时间早6点窗口，留2小时触发裕量
       analyze: true                # 做 AI 分析
-      ai_mode: "daily"             # AI 汇总全天内容
+      ai_mode: "incremental"       # AI 只分析新增（前一晚到清晨这半天）
       push: true                   # 推送
-      report_mode: "daily"         # 当日全部新闻汇总
+      report_mode: "incremental"   # 只推自上次推送以来的新增，避免与晚报重复
       once:
         analyze: true              # 窗口内只分析一次
         push: true                 # 窗口内只推送一次
@@ -476,9 +476,9 @@ custom:
       start: "18:00"
       end: "20:00"                 # 英国时间晚6点窗口，留2小时触发裕量
       analyze: true                # 做 AI 分析
-      ai_mode: "daily"             # AI 汇总全天内容
+      ai_mode: "incremental"       # AI 只分析新增（清晨到傍晚这半天）
       push: true                   # 推送
-      report_mode: "daily"         # 当日全部新闻汇总
+      report_mode: "incremental"   # 只推早报之后的新增，与早报互不重复
       once:
         analyze: true              # 窗口内只分析一次
         push: true                 # 窗口内只推送一次
